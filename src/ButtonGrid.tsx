@@ -2,12 +2,12 @@ import Button from "./Button";
 import type { Digit, Operation } from "./types";
 
 interface ButtonGridProps {
-  onNumberClick: (number: Digit) => void;
-  onOperationClick: (operation: Operation) => void;
-  onEqualsClick: () => void;
-  onClearClick: () => void;
-  onDecimalClick: () => void;
-  pendingOperation: Operation | null;
+  readonly onNumberClick: (number: Digit) => void;
+  readonly onOperationClick: (operation: Operation) => void;
+  readonly onEqualsClick: () => void;
+  readonly onClearClick: () => void;
+  readonly onDecimalClick: () => void;
+  readonly pendingOperation: Operation | null;
 }
 
 const ButtonGrid = ({

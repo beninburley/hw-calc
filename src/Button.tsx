@@ -1,10 +1,10 @@
 import type { ButtonVariant, Digit, Operation } from "./types";
 
 interface ButtonProps {
-  value: Digit | Operation | "=" | "C" | ".";
-  onClick: (value: Digit | Operation | "=" | "C" | ".") => void;
-  variant?: ButtonVariant;
-  className?: string;
+  readonly value: Digit | Operation | "=" | "C" | ".";
+  readonly onClick: (value: Digit | Operation | "=" | "C" | ".") => void;
+  readonly variant?: ButtonVariant;
+  readonly className?: string;
 }
 
 const Button = ({
