@@ -1,4 +1,4 @@
-type ButtonVariant = "default" | "operation" | "equals" | "clear" | "active";
+import type { ButtonVariant } from "./types";
 
 interface ButtonProps {
   value: string;
@@ -21,7 +21,8 @@ const Button = ({
     operation: "bg-orange-500 text-white shadow-md hover:bg-orange-400",
     equals: "bg-green-500 text-white shadow-md hover:bg-green-400",
     clear: "bg-red-500 text-white shadow-md hover:bg-red-400",
-    active: "bg-blue-500 text-white shadow-md hover:bg-blue-400 ring-2 ring-white",
+    active:
+      "bg-blue-500 text-white shadow-md hover:bg-blue-400 ring-2 ring-white",
   };
 
   return (

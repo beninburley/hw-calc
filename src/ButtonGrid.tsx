@@ -1,5 +1,5 @@
 import Button from "./Button";
-import type { Operation } from "./Calculator";
+import type { Operation } from "./types";
 
 interface ButtonGridProps {
   onNumberClick: (number: string) => void;

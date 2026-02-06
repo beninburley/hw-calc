@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Display from "./Display";
 import ButtonGrid from "./ButtonGrid";
-
-export type Operation = "+" | "−" | "×" | "÷";
+import type { Operation } from "./types";
 
 const Calculator = () => {
   const [display, setDisplay] = useState("0");
