@@ -9,6 +9,7 @@ export type Operation = "+" | "−" | "×" | "÷";
 
 export type Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 
+// PendingOperation doesn't need an operand if there is no previous value
 export type PendingOperation =
   | { preValue: number; operand: Operation | null }
   | { preValue: null };
