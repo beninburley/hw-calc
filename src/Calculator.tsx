@@ -1,57 +1,76 @@
 import { useState } from "react";
 import Display from "./Display";
 import ButtonGrid from "./ButtonGrid";
-import type { Digit, Operation } from "./types";
+import type { Digit, Operation, CalculatorState } from "./types";
 
 const Calculator = () => {
-  const [display, setDisplay] = useState("0");
-  const [previousValue, setPreviousValue] = useState<number | null>(null);
-  const [pendingOperation, setPendingOperation] = useState<Operation | null>(
-    null,
-  );
+  const [state, setState] = useState<CalculatorState>({
+    displayState: "0",
+    pendOp: { preValue: null },
+  });
 
-  const handleNumberClick = (
-    number: Digit | Operation | "=" | "C" | ".",
-  ): void => {
+  const handleNumberClick = (number: Digit): void => {
     console.log("Number clicked:", number);
-    // TODO: Implement number input logic
-    const prevNum = display; //Is this even worth doing?
-    if (prevNum === "0") {
-      setDisplay(number); //Figure out why this is unsafe and how to do it better
+    if (state.displayState === "0") {
+      setState({
+        ...state,
+        displayState: number,
+      });
     } else {
-      setDisplay((prevNum) => prevNum + number); //Figure out why this is unsafe and how to do it better
+      setState({
+        ...state,
+        displayState: state.displayState + number,
+      });
     }
   };
 
   const handleOperationClick = (op: Operation): void => {
     console.log("Operation clicked:", op);
-    // TODO: Implement operation logic
-    let result: string = "";
-    const pends: Operation | null = pendingOperation;
-    if (!pends) {
+    const hasPendingOp =
+      state.pendOp.preValue !== null &&
+      "operand" in state.pendOp &&
+      state.pendOp.operand !== null;
+    if (!hasPendingOp) {
       // console.log(
       //   "There is no pending operation. Setting Operation and previous value",
       // );
-      result = display;
-      setPendingOperation(op);
-      setPreviousValue(Number(result));
+      setState({
+        displayState: state.displayState + op,
+        pendOp: {
+          preValue: Number(state.displayState),
+          operand: op,
+        },
+      });
     } else if (
-      pends &&
-      display.split(pends).length > 1 &&
-      display.split(pends)[1].length > 0
+      hasPendingOp &&
+      "operand" in state.pendOp &&
+      state.pendOp.operand &&
+      state.displayState.split(state.pendOp.operand).length > 1 &&
+      state.displayState.split(state.pendOp.operand)[1].length > 0
     ) {
       console.log("There is a pending operation.");
-      console.log("Here's the parts of the display:", display.split(pends));
-      result = handleEqualsClick();
-      setPreviousValue(Number(result));
-      setPendingOperation(op);
-    } else if (pends !== null) {
-      console.log("replacing", pends, "with", op);
-      result = display.replace(pends, "");
-      setPendingOperation(op);
+      const result = handleEqualsClick();
+      setState({
+        displayState: result + op,
+        pendOp: {
+          preValue: Number(result),
+          operand: op,
+        },
+      });
+    } else {
+      console.log("replacing operator wih", op);
+      const currentOp = "operand" in state.pendOp ? state.pendOp.operand : null;
+      const result = currentOp
+        ? state.displayState.replace(currentOp, "")
+        : state.displayState;
+      setState({
+        displayState: result + op,
+        pendOp: {
+          preValue: state.pendOp.preValue,
+          operand: op,
+        },
+      });
     }
-    console.log("End operation, making", result, op);
-    setDisplay(result + op);
   };
 
   const operations: Record<Operation, (a: number, b: number) => number> = {
@@ -65,59 +84,77 @@ const Calculator = () => {
   const handleEqualsClick = (): string => {
     console.log("Equals clicked");
 
-    if (!pendingOperation || previousValue === null) {
-      return display;
+    if (state.pendOp.preValue === null) {
+      return state.displayState;
     }
+    if (state.pendOp.operand && "operand" in state.pendOp) {
+      const parts = state.displayState.split(state.pendOp.operand);
+      const secondNumber = Number(parts[1]);
 
-    const parts = display.split(pendingOperation);
-    const secondNumber = Number(parts[1]);
+      console.log(
+        "Performing operation:",
+        state.pendOp.preValue,
+        state.pendOp.operand,
+        secondNumber,
+      );
 
-    console.log(
-      "Performing operation:",
-      previousValue,
-      pendingOperation,
-      secondNumber,
-    );
+      const result = operations[state.pendOp.operand](
+        state.pendOp.preValue,
+        secondNumber,
+      );
 
-    const result = operations[pendingOperation](previousValue, secondNumber);
-
-    setPendingOperation(null);
-    setDisplay(String(result));
-    return String(result);
+      setState({
+        displayState: String(result),
+        pendOp: { preValue: null },
+      });
+      return String(result);
+    }
+    return state.displayState;
   };
 
   const handleClearClick = (): void => {
     console.log("Clear clicked");
-    setDisplay("0");
-    setPendingOperation(null);
-    setPreviousValue(null);
+    setState({
+      displayState: "0",
+      pendOp: { preValue: null },
+    });
   };
 
   const handleDecimalClick = (): void => {
     console.log("Decimal clicked");
-    if (display.includes(".")) {
+    if (state.displayState.includes(".")) {
       if (
-        pendingOperation &&
-        !display.replace(String(previousValue), "").includes(".")
+        "operand" in state.pendOp &&
+        !state.displayState
+          .replace(String(state.pendOp.preValue), "")
+          .includes(".")
       ) {
-        setDisplay(display + ".");
+        setState({
+          ...state,
+          displayState: state.displayState + ".",
+        });
       }
-    } else if (!display.includes(".")) {
-      setDisplay(display + ".");
+    } else if (!state.displayState.includes(".")) {
+      setState({
+        ...state,
+        displayState: state.displayState + ".",
+      });
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="bg-slate-700 rounded-2xl shadow-2xl p-6 w-80">
-        <Display value={display} />
+        <Display value={state.displayState} />
         <ButtonGrid
           onNumberClick={handleNumberClick}
           onOperationClick={handleOperationClick}
           onEqualsClick={handleEqualsClick}
           onClearClick={handleClearClick}
           onDecimalClick={handleDecimalClick}
-          pendingOperation={pendingOperation}
+          pendingOperation={
+            "operand" in state.pendOp ? state.pendOp.operand : null
+          }
         />
       </div>
     </div>
