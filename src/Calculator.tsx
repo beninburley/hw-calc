@@ -10,7 +10,9 @@ const Calculator = () => {
     null,
   );
 
-  const handleNumberClick = (number: Digit): void => {
+  const handleNumberClick = (
+    number: Digit | Operation | "=" | "C" | ".",
+  ): void => {
     console.log("Number clicked:", number);
     // TODO: Implement number input logic
     const prevNum = display; //Is this even worth doing?
