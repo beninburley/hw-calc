@@ -1,8 +1,8 @@
 import Button from "./Button";
-import type { Operation } from "./types";
+import type { Digit, Operation } from "./types";
 
 interface ButtonGridProps {
-  onNumberClick: (number: string) => void;
+  onNumberClick: (number: Digit | Operation | "=" | "C" | ".") => void;
   onOperationClick: (operation: Operation) => void;
   onEqualsClick: () => void;
   onClearClick: () => void;

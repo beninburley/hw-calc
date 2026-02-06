@@ -1,8 +1,8 @@
-import type { ButtonVariant } from "./types";
+import type { ButtonVariant, Digit, Operation } from "./types";
 
 interface ButtonProps {
-  value: string;
-  onClick: (value: string) => void;
+  value: Digit | Operation | "=" | "C" | ".";
+  onClick: (value: Digit | Operation | "=" | "C" | ".") => void;
   variant?: ButtonVariant;
   className?: string;
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Display from "./Display";
 import ButtonGrid from "./ButtonGrid";
-import type { Operation } from "./types";
+import type { Digit, Operation } from "./types";
 
 const Calculator = () => {
   const [display, setDisplay] = useState("0");
@@ -10,7 +10,7 @@ const Calculator = () => {
     null,
   );
 
-  const handleNumberClick = (number: string): void => {
+  const handleNumberClick = (number: Digit): void => {
     console.log("Number clicked:", number);
     // TODO: Implement number input logic
     const prevNum = display; //Is this even worth doing?
